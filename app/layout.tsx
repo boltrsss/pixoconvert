@@ -1,3 +1,4 @@
+import Script from "next/script";
 import "./globals.css";
 import type { Metadata } from "next";
 import { LanguageProvider } from "@/context/LanguageContext";
@@ -18,6 +19,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+
+      {/* 🔽🔽🔽 就插在這裡（body 之前） 🔽🔽🔽 */}
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2697453238338970"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
+      {/* 🔼🔼🔼 插入位置到這裡結束 🔼🔼🔼 */}
+      
       <body className="bg-slate-50 text-slate-900">
         <LanguageProvider>
           <Header />
