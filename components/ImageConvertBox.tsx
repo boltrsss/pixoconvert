@@ -13,7 +13,6 @@ type TargetFormat = "jpg" | "png" | "webp" | "jpeg";
 const SUPPORTED: TargetFormat[] = ["jpg", "jpeg", "png", "webp"];
 
 function normalizeTarget(t: TargetFormat): "jpg" | "png" | "webp" {
-  // 後端通常只吃 jpg/png/webp，前端選 jpeg 也統一轉成 jpg
   if (t === "jpeg") return "jpg";
   return t;
 }
@@ -29,10 +28,11 @@ function isErrorStatus(status?: string) {
 }
 
 export default function ImageConvertBox() {
-  const fileRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [file, setFile] = useState<File | null>(null);
   const [target, setTarget] = useState<TargetFormat>("png");
+  const [isDragging, setIsDragging] = useState(false);
 
   const [status, setStatus] = useState<
     "idle" | "uploading" | "converting" | "done" | "error"
@@ -51,7 +51,7 @@ export default function ImageConvertBox() {
     setDownloadUrl("");
   }
 
-  async function onPickFile(f: File | null) {
+  function setPickedFile(f: File | null) {
     setFile(f);
     resetState();
   }
@@ -72,24 +72,18 @@ export default function ImageConvertBox() {
       setMessage("Preparing upload...");
       setDownloadUrl("");
 
-      // 1) Get presigned URL
       const up = await getUploadUrl(file);
-
-      // 2) Upload to S3
       await uploadFileToS3(file, up.upload_url);
 
-      // 3) Start conversion
       setStatus("converting");
       setMessage("Converting...");
 
       const start = await startImageConversion(up.key, normalizeTarget(target));
 
-      // 4) Poll status
-      const maxTries = 70; // ~70s (1s interval)
+      const maxTries = 90; // ~90s
       for (let i = 0; i < maxTries; i++) {
         const st = await getJobStatus(start.job_id);
 
-        // ✅ 支援 done / completed / success
         if (isDoneStatus(st.status)) {
           if (st.file_url) {
             setDownloadUrl(st.file_url);
@@ -98,8 +92,6 @@ export default function ImageConvertBox() {
             return;
           }
 
-          // 有些後端 completed 只回 output_s3_key，沒回 file_url
-          // 先把狀況顯示出來方便 debug
           setStatus("error");
           setMessage(
             st.output_s3_key
@@ -109,24 +101,20 @@ export default function ImageConvertBox() {
           return;
         }
 
-        // ✅ 支援 error / failed / fail
         if (isErrorStatus(st.status)) {
           setStatus("error");
           setMessage(extractErrorMessage(st));
           return;
         }
 
-        // Progress / status hints
         const p =
-          typeof st.progress === "number" ? Math.max(0, Math.min(99, st.progress)) : null;
+          typeof st.progress === "number"
+            ? Math.max(0, Math.min(99, st.progress))
+            : null;
 
-        if (p !== null) {
-          setMessage(`Converting... ${p}%`);
-        } else if (st.status) {
-          setMessage(`Converting... (${st.status})`);
-        } else {
-          setMessage("Converting...");
-        }
+        if (p !== null) setMessage(`Converting... ${p}%`);
+        else if (st.status) setMessage(`Converting... (${st.status})`);
+        else setMessage("Converting...");
 
         await new Promise((r) => setTimeout(r, 1000));
       }
@@ -139,101 +127,140 @@ export default function ImageConvertBox() {
     }
   }
 
+  // --- Drag & Drop handlers ---
+  const onDrop: React.DragEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const f = e.dataTransfer?.files?.[0] || null;
+    if (f) setPickedFile(f);
+  };
+
+  const onDragOver: React.DragEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const onDragLeave: React.DragEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
   return (
-    <div className="w-full max-w-2xl rounded-2xl bg-white shadow-sm border border-slate-200 p-5">
+    <div className="w-full max-w-2xl rounded-2xl bg-white shadow-sm border border-slate-200 p-6">
       <h2 className="text-lg font-semibold">Convert an image</h2>
       <p className="text-sm text-slate-600 mt-1">
         Upload a JPG/PNG/WebP file, choose an output format, and download the converted result.
       </p>
 
-      <div className="mt-4 space-y-3">
+      {/* Big Drag Area */}
+      <div
+        className={`mt-5 rounded-2xl border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${
+          isDragging
+            ? "border-blue-500 bg-blue-50"
+            : "border-slate-300 bg-slate-50 hover:bg-slate-100"
+        }`}
+        onClick={() => inputRef.current?.click()}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
+        onDragLeave={onDragLeave}
+      >
+        <div className="mx-auto w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center">
+          <span className="text-2xl">⬆️</span>
+        </div>
+
+        <div className="mt-3 text-base font-semibold text-slate-900">
+          Drop your image here
+        </div>
+        <div className="mt-1 text-sm text-slate-600">
+          or <span className="underline text-blue-600">click to browse</span>
+        </div>
+
+        <div className="mt-3 text-xs text-slate-500">
+          Supported: JPG, PNG, WebP
+        </div>
+
+        {file && (
+          <div className="mt-4 text-sm text-slate-700">
+            Selected: <span className="font-medium">{file.name}</span>
+          </div>
+        )}
+
         <input
-          ref={fileRef}
+          ref={inputRef}
           type="file"
           accept="image/jpeg,image/png,image/webp"
           className="hidden"
-          onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
+          onChange={(e) => setPickedFile(e.target.files?.[0] ?? null)}
         />
+      </div>
+
+      {/* Controls */}
+      <div className="mt-4 flex flex-col sm:flex-row gap-3">
+        <select
+          value={target}
+          onChange={(e) => setTarget(e.target.value as TargetFormat)}
+          className="w-full sm:w-1/2 rounded-xl border border-slate-300 px-3 py-2 bg-white"
+        >
+          {SUPPORTED.map((f) => (
+            <option key={f} value={f}>
+              Convert to {f.toUpperCase()}
+            </option>
+          ))}
+        </select>
 
         <button
           type="button"
-          onClick={() => fileRef.current?.click()}
-          className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-left hover:bg-slate-100"
+          disabled={!canConvert}
+          onClick={onConvert}
+          className="w-full sm:w-1/2 rounded-xl bg-slate-900 text-white px-4 py-2 disabled:opacity-50"
         >
-          {file ? (
-            <span className="text-sm">
-              Selected: <span className="font-medium">{file.name}</span>
-            </span>
-          ) : (
-            <span className="text-sm text-slate-700">Click to upload an image</span>
-          )}
+          {status === "uploading"
+            ? "Uploading..."
+            : status === "converting"
+            ? "Converting..."
+            : "Convert"}
+        </button>
+      </div>
+
+      {/* Message */}
+      {message ? (
+        <div className={`mt-3 text-sm ${status === "error" ? "text-red-600" : "text-slate-700"}`}>
+          {message}
+        </div>
+      ) : null}
+
+      {/* Download */}
+      {downloadUrl ? (
+        <a
+          className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold"
+          href={downloadUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Download
+        </a>
+      ) : null}
+
+      {/* Footer small row */}
+      <div className="mt-4 flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => {
+            setPickedFile(null);
+            if (inputRef.current) inputRef.current.value = "";
+          }}
+          className="text-xs text-slate-600 hover:text-slate-900 underline"
+        >
+          Reset
         </button>
 
-        <div className="flex flex-col sm:flex-row gap-3">
-          <select
-            value={target}
-            onChange={(e) => setTarget(e.target.value as TargetFormat)}
-            className="w-full sm:w-1/2 rounded-xl border border-slate-300 px-3 py-2"
-          >
-            {SUPPORTED.map((f) => (
-              <option key={f} value={f}>
-                Convert to {f.toUpperCase()}
-              </option>
-            ))}
-          </select>
-
-          <button
-            type="button"
-            disabled={!canConvert}
-            onClick={onConvert}
-            className="w-full sm:w-1/2 rounded-xl bg-slate-900 text-white px-4 py-2 disabled:opacity-50"
-          >
-            {status === "uploading"
-              ? "Uploading..."
-              : status === "converting"
-              ? "Converting..."
-              : "Convert"}
-          </button>
-        </div>
-
-        {message ? (
-          <div
-            className={`text-sm ${
-              status === "error" ? "text-red-600" : "text-slate-700"
-            }`}
-          >
-            {message}
-          </div>
-        ) : null}
-
-        {downloadUrl ? (
-          <a
-            className="inline-flex items-center justify-center rounded-xl bg-emerald-600 text-white px-4 py-2"
-            href={downloadUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Download
-          </a>
-        ) : null}
-
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => {
-              setFile(null);
-              resetState();
-              if (fileRef.current) fileRef.current.value = "";
-            }}
-            className="text-xs text-slate-600 hover:text-slate-900 underline"
-          >
-            Reset
-          </button>
-
-          <p className="text-xs text-slate-500">
-            Files are processed only to perform conversion. See Privacy Policy for details.
-          </p>
-        </div>
+        <p className="text-xs text-slate-500">
+          Files are processed only to perform conversion.
+        </p>
       </div>
     </div>
   );
