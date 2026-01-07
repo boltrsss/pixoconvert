@@ -1,4 +1,5 @@
 import ImageConvertBox from "@/components/ImageConvertBox";
+import AdSlot from "@/components/AdSlot";
 
 
 export default function HomePage() {
@@ -17,8 +18,10 @@ export default function HomePage() {
 
         <section className="mb-10">
           <ImageConvertBox />
-      
         </section>
+        <section className="mb-10">
+  <AdSlot label="Ad space (Top)" />
+</section>
 
         <section className="grid gap-6 md:grid-cols-3">
           <div className="rounded-2xl bg-white border border-slate-200 p-5">
