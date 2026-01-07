@@ -1,4 +1,5 @@
 import ImageConvertBox from "@/components/ImageConvertBox";
+import ImageConvertBox from "@/components/AdSlot";
 
 export default function HomePage() {
   return (
