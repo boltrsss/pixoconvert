@@ -51,6 +51,12 @@ export default function ImageConvertBox() {
     setDownloadUrl("");
   }
 
+  function clearFile() {
+    setFile(null);
+    resetState();
+    if (inputRef.current) inputRef.current.value = "";
+  }
+
   function setPickedFile(f: File | null) {
     setFile(f);
     resetState();
@@ -149,8 +155,10 @@ export default function ImageConvertBox() {
     setIsDragging(false);
   };
 
+  const selectedName = file?.name || "";
+
   return (
-    <div className="w-full max-w-2xl rounded-2xl bg-white shadow-sm border border-slate-200 p-6">
+    <div className="w-full max-w-2xl mx-auto rounded-2xl bg-white shadow-sm border border-slate-200 p-6">
       <h2 className="text-lg font-semibold">Convert an image</h2>
       <p className="text-sm text-slate-600 mt-1">
         Upload a JPG/PNG/WebP file, choose an output format, and download the converted result.
@@ -158,36 +166,55 @@ export default function ImageConvertBox() {
 
       {/* Big Drag Area */}
       <div
-        className={`mt-5 rounded-2xl border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${
+        className={`mt-5 w-full mx-auto rounded-2xl border-2 border-dashed p-10 text-center cursor-pointer transition-colors relative ${
           isDragging
-            ? "border-blue-500 bg-blue-50"
-            : "border-slate-300 bg-slate-50 hover:bg-slate-100"
+            ? "border-blue-600 bg-blue-100"
+            : "border-blue-300 bg-blue-50 hover:bg-blue-100"
         }`}
         onClick={() => inputRef.current?.click()}
         onDrop={onDrop}
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
       >
-        <div className="mx-auto w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center">
-          <span className="text-2xl">⬆️</span>
-        </div>
-
-        <div className="mt-3 text-base font-semibold text-slate-900">
-          Drop your image here
-        </div>
-        <div className="mt-1 text-sm text-slate-600">
-          or <span className="underline text-blue-600">click to browse</span>
-        </div>
-
-        <div className="mt-3 text-xs text-slate-500">
-          Supported: JPG, PNG, WebP
-        </div>
-
+        {/* Remove (X) */}
         {file && (
-          <div className="mt-4 text-sm text-slate-700">
-            Selected: <span className="font-medium">{file.name}</span>
-          </div>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              clearFile();
+            }}
+            aria-label="Remove selected file"
+            className="absolute top-3 right-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-white"
+          >
+            ✕
+          </button>
         )}
+
+        <div className="flex flex-col items-center justify-center">
+          <div className="mx-auto w-14 h-14 rounded-full bg-blue-200 flex items-center justify-center">
+            <span className="text-2xl">⬆️</span>
+          </div>
+
+          <div className="mt-4 text-base font-semibold text-slate-900">
+            Drop your image here
+          </div>
+          <div className="mt-1 text-sm text-slate-700">
+            or <span className="underline text-blue-700">click to browse</span>
+          </div>
+
+          <div className="mt-3 text-xs text-slate-600">
+            Supported: JPG, PNG, WebP
+          </div>
+
+          {file && (
+            <div className="mt-4 w-full max-w-xl text-sm text-slate-800">
+              <div className="font-medium">Selected:</div>
+              <div className="mt-1 break-words">{selectedName}</div>
+            </div>
+          )}
+        </div>
 
         <input
           ref={inputRef}
@@ -228,7 +255,11 @@ export default function ImageConvertBox() {
 
       {/* Message */}
       {message ? (
-        <div className={`mt-3 text-sm ${status === "error" ? "text-red-600" : "text-slate-700"}`}>
+        <div
+          className={`mt-3 text-sm ${
+            status === "error" ? "text-red-600" : "text-slate-700"
+          }`}
+        >
           {message}
         </div>
       ) : null}
@@ -249,10 +280,7 @@ export default function ImageConvertBox() {
       <div className="mt-4 flex items-center gap-3">
         <button
           type="button"
-          onClick={() => {
-            setPickedFile(null);
-            if (inputRef.current) inputRef.current.value = "";
-          }}
+          onClick={clearFile}
           className="text-xs text-slate-600 hover:text-slate-900 underline"
         >
           Reset
