@@ -70,6 +70,24 @@ export default function ImageConvertBox() {
     );
   }
 
+  // ✅ Status badge (color + bold)
+  const statusBadge = (s: typeof status) => {
+    switch (s) {
+      case "idle":
+        return { label: "Ready", cls: "bg-slate-100 text-slate-700" };
+      case "uploading":
+        return { label: "Uploading", cls: "bg-blue-50 text-blue-700" };
+      case "converting":
+        return { label: "Processing", cls: "bg-amber-50 text-amber-700" };
+      case "done":
+        return { label: "Completed", cls: "bg-emerald-50 text-emerald-700" };
+      case "error":
+        return { label: "Failed", cls: "bg-red-50 text-red-700" };
+      default:
+        return { label: String(s), cls: "bg-slate-100 text-slate-700" };
+    }
+  };
+
   async function onConvert() {
     if (!file) return;
 
@@ -118,9 +136,9 @@ export default function ImageConvertBox() {
             ? Math.max(0, Math.min(99, st.progress))
             : null;
 
-        if (p !== null) setMessage(`Converting... ${p}%`);
-        else if (st.status) setMessage(`Converting... (${st.status})`);
-        else setMessage("Converting...");
+        if (p !== null) setMessage(`Processing... ${p}%`);
+        else if (st.status) setMessage(`Processing... (${st.status})`);
+        else setMessage("Processing...");
 
         await new Promise((r) => setTimeout(r, 1000));
       }
@@ -157,12 +175,31 @@ export default function ImageConvertBox() {
 
   const selectedName = file?.name || "";
 
+  const badge = statusBadge(status);
+
   return (
     <div className="w-full max-w-2xl mx-auto rounded-2xl bg-white shadow-sm border border-slate-200 p-6">
-      <h2 className="text-lg font-semibold">Convert an image</h2>
-      <p className="text-sm text-slate-600 mt-1">
-        Upload a JPG/PNG/WebP file, choose an output format, and download the converted result.
-      </p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-semibold">Convert an image</h2>
+          <p className="text-sm text-slate-600 mt-1">
+            Upload a JPG/PNG/WebP file, choose an output format, and download
+            the converted result.
+          </p>
+        </div>
+
+        {/* ✅ Status badge */}
+        <div
+          className={[
+            "shrink-0 inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold",
+            badge.cls,
+          ].join(" ")}
+          aria-label="Conversion status"
+          title="Conversion status"
+        >
+          {badge.label}
+        </div>
+      </div>
 
       {/* Big Drag Area */}
       <div
@@ -248,26 +285,36 @@ export default function ImageConvertBox() {
           {status === "uploading"
             ? "Uploading..."
             : status === "converting"
-            ? "Converting..."
+            ? "Processing..."
             : "Convert"}
         </button>
       </div>
 
-      {/* Message */}
+      {/* ✅ Highlighted message */}
       {message ? (
-        <div
-          className={`mt-3 text-sm ${
-            status === "error" ? "text-red-600" : "text-slate-700"
-          }`}
-        >
-          {message}
+        <div className="mt-3 text-sm">
+          <span
+            className={`font-bold ${
+              status === "error"
+                ? "text-red-700"
+                : status === "done"
+                ? "text-emerald-700"
+                : status === "uploading"
+                ? "text-blue-700"
+                : status === "converting"
+                ? "text-amber-700"
+                : "text-slate-700"
+            }`}
+          >
+            {message}
+          </span>
         </div>
       ) : null}
 
       {/* Download */}
       {downloadUrl ? (
         <a
-          className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold"
+          className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700"
           href={downloadUrl}
           target="_blank"
           rel="noopener noreferrer"
