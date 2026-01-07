@@ -1,21 +1,15 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { LanguageProvider } from "@/context/LanguageContext";
-
-// ✅ 新增：全站 Header
 import Header from "@/components/layout/Header";
 
 export const metadata: Metadata = {
-  title: "WiseConvert - Online File Converter",
+  title: "PixoConvert - Simple Online Image Converter",
   description:
-    "Convert videos, audio, images, documents and PDFs with WiseConvert, a fast and secure online file converter.",
+    "Convert JPG, PNG, and WebP images online with PixoConvert. Fast, simple, no account required.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="bg-slate-50 text-slate-900">
