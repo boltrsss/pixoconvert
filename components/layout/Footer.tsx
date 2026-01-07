@@ -1,39 +1,48 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
-    <footer className="mt-16 border-t border-slate-200 bg-white">
+    <footer className="w-full border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-6xl px-4 py-10">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-sm text-slate-600">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          {/* Left */}
+          <div>
             <div className="font-semibold text-slate-900">PixoConvert</div>
-            <div className="mt-1">
+            <p className="text-sm text-slate-500 mt-1">
               Simple online image converter — JPG, PNG, WebP.
-            </div>
+            </p>
+            <p className="text-xs text-slate-400 mt-2">
+              © {new Date().getFullYear()} PixoConvert. All rights reserved.
+            </p>
           </div>
 
-          <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-            <a
+          {/* Right links */}
+          <div className="flex flex-wrap items-center gap-4 text-sm">
+            <Link
+              href="/about"
+              className="text-slate-600 hover:text-slate-900"
+            >
+              About
+            </Link>
+            <Link
               href="/privacy-policy"
-              className="text-slate-600 hover:text-slate-900 underline-offset-4 hover:underline"
+              className="text-slate-600 hover:text-slate-900"
             >
               Privacy Policy
-            </a>
-            <a
+            </Link>
+            <Link
               href="/terms-of-service"
-              className="text-slate-600 hover:text-slate-900 underline-offset-4 hover:underline"
+              className="text-slate-600 hover:text-slate-900"
             >
               Terms of Service
-            </a>
-            <a
+            </Link>
+            <Link
               href="/contact"
-              className="text-slate-600 hover:text-slate-900 underline-offset-4 hover:underline"
+              className="text-slate-600 hover:text-slate-900"
             >
               Contact
-            </a>
-          </nav>
-        </div>
-
-        <div className="mt-8 text-xs text-slate-500">
-          © {new Date().getFullYear()} PixoConvert. All rights reserved.
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
