@@ -9,8 +9,24 @@ import {
   type StatusResponse,
 } from "@/lib/api";
 
-type TargetFormat = "jpg" | "png" | "webp";
-const SUPPORTED: TargetFormat[] = ["jpg", "png", "webp"];
+type TargetFormat = "jpg" | "png" | "webp" | "jpeg";
+const SUPPORTED: TargetFormat[] = ["jpg", "jpeg", "png", "webp"];
+
+function normalizeTarget(t: TargetFormat): "jpg" | "png" | "webp" {
+  // 後端通常只吃 jpg/png/webp，前端選 jpeg 也統一轉成 jpg
+  if (t === "jpeg") return "jpg";
+  return t;
+}
+
+function isDoneStatus(status?: string) {
+  const s = (status || "").toLowerCase();
+  return s === "done" || s === "completed" || s === "success";
+}
+
+function isErrorStatus(status?: string) {
+  const s = (status || "").toLowerCase();
+  return s === "error" || s === "failed" || s === "fail";
+}
 
 export default function ImageConvertBox() {
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -41,7 +57,11 @@ export default function ImageConvertBox() {
   }
 
   function extractErrorMessage(st: StatusResponse) {
-    return st.message || (st.raw && (st.raw as any).message) || "Conversion failed.";
+    return (
+      st.message ||
+      (st.raw && (st.raw as any).message) ||
+      "Conversion failed."
+    );
   }
 
   async function onConvert() {
@@ -50,35 +70,62 @@ export default function ImageConvertBox() {
     try {
       setStatus("uploading");
       setMessage("Preparing upload...");
+      setDownloadUrl("");
 
-      // 1) Get presigned URL (backend contract)
+      // 1) Get presigned URL
       const up = await getUploadUrl(file);
 
       // 2) Upload to S3
       await uploadFileToS3(file, up.upload_url);
 
-      // 3) Start conversion (image only)
+      // 3) Start conversion
       setStatus("converting");
       setMessage("Converting...");
 
-      const start = await startImageConversion(up.key, target);
+      const start = await startImageConversion(up.key, normalizeTarget(target));
 
       // 4) Poll status
-      const maxTries = 60; // ~60s
+      const maxTries = 70; // ~70s (1s interval)
       for (let i = 0; i < maxTries; i++) {
         const st = await getJobStatus(start.job_id);
 
-        if (st.status === "done" && st.file_url) {
-          setDownloadUrl(st.file_url);
-          setStatus("done");
-          setMessage("Done.");
+        // ✅ 支援 done / completed / success
+        if (isDoneStatus(st.status)) {
+          if (st.file_url) {
+            setDownloadUrl(st.file_url);
+            setStatus("done");
+            setMessage("Done.");
+            return;
+          }
+
+          // 有些後端 completed 只回 output_s3_key，沒回 file_url
+          // 先把狀況顯示出來方便 debug
+          setStatus("error");
+          setMessage(
+            st.output_s3_key
+              ? "Job completed but no file_url returned. Backend should return a signed download URL."
+              : "Job completed but no file_url returned."
+          );
           return;
         }
 
-        if (st.status === "error") {
+        // ✅ 支援 error / failed / fail
+        if (isErrorStatus(st.status)) {
           setStatus("error");
           setMessage(extractErrorMessage(st));
           return;
+        }
+
+        // Progress / status hints
+        const p =
+          typeof st.progress === "number" ? Math.max(0, Math.min(99, st.progress)) : null;
+
+        if (p !== null) {
+          setMessage(`Converting... ${p}%`);
+        } else if (st.status) {
+          setMessage(`Converting... (${st.status})`);
+        } else {
+          setMessage("Converting...");
         }
 
         await new Promise((r) => setTimeout(r, 1000));
@@ -149,12 +196,22 @@ export default function ImageConvertBox() {
           </button>
         </div>
 
-        {message ? <div className="text-sm text-slate-700">{message}</div> : null}
+        {message ? (
+          <div
+            className={`text-sm ${
+              status === "error" ? "text-red-600" : "text-slate-700"
+            }`}
+          >
+            {message}
+          </div>
+        ) : null}
 
         {downloadUrl ? (
           <a
             className="inline-flex items-center justify-center rounded-xl bg-emerald-600 text-white px-4 py-2"
             href={downloadUrl}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Download
           </a>
