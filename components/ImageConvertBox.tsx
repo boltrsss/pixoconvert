@@ -1,27 +1,47 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from "react";
-import { getUploadUrl, uploadFileToS3, startImageConvert, getJobStatus } from "@/lib/api";
+import {
+  getUploadUrl,
+  uploadFileToS3,
+  startImageConversion,
+  getJobStatus,
+  type StatusResponse,
+} from "@/lib/api";
 
 type TargetFormat = "jpg" | "png" | "webp";
-
 const SUPPORTED: TargetFormat[] = ["jpg", "png", "webp"];
 
 export default function ImageConvertBox() {
   const fileRef = useRef<HTMLInputElement | null>(null);
+
   const [file, setFile] = useState<File | null>(null);
   const [target, setTarget] = useState<TargetFormat>("png");
-  const [status, setStatus] = useState<"idle" | "uploading" | "converting" | "done" | "error">("idle");
+
+  const [status, setStatus] = useState<
+    "idle" | "uploading" | "converting" | "done" | "error"
+  >("idle");
+
   const [message, setMessage] = useState<string>("");
   const [downloadUrl, setDownloadUrl] = useState<string>("");
 
-  const canConvert = useMemo(() => !!file && status !== "uploading" && status !== "converting", [file, status]);
+  const canConvert = useMemo(() => {
+    return !!file && status !== "uploading" && status !== "converting";
+  }, [file, status]);
 
-  async function onPickFile(f: File | null) {
-    setFile(f);
+  function resetState() {
     setStatus("idle");
     setMessage("");
     setDownloadUrl("");
+  }
+
+  async function onPickFile(f: File | null) {
+    setFile(f);
+    resetState();
+  }
+
+  function extractErrorMessage(st: StatusResponse) {
+    return st.message || (st.raw && (st.raw as any).message) || "Conversion failed.";
   }
 
   async function onConvert() {
@@ -31,30 +51,36 @@ export default function ImageConvertBox() {
       setStatus("uploading");
       setMessage("Preparing upload...");
 
-      const up = await getUploadUrl(file.name, file.type || "application/octet-stream");
-      await uploadFileToS3(up.upload_url, file);
+      // 1) Get presigned URL (backend contract)
+      const up = await getUploadUrl(file);
 
+      // 2) Upload to S3
+      await uploadFileToS3(file, up.upload_url);
+
+      // 3) Start conversion (image only)
       setStatus("converting");
       setMessage("Converting...");
 
-      const start = await startImageConvert(up.key, target);
+      const start = await startImageConversion(up.key, target);
 
-      // poll
-      const maxTries = 60; // ~60s if 1s interval
+      // 4) Poll status
+      const maxTries = 60; // ~60s
       for (let i = 0; i < maxTries; i++) {
         const st = await getJobStatus(start.job_id);
 
-        if (st.status === "done" && st.download_url) {
-          setDownloadUrl(st.download_url);
+        if (st.status === "done" && st.file_url) {
+          setDownloadUrl(st.file_url);
           setStatus("done");
           setMessage("Done.");
           return;
         }
+
         if (st.status === "error") {
           setStatus("error");
-          setMessage(st.error || "Conversion failed.");
+          setMessage(extractErrorMessage(st));
           return;
         }
+
         await new Promise((r) => setTimeout(r, 1000));
       }
 
@@ -115,7 +141,11 @@ export default function ImageConvertBox() {
             onClick={onConvert}
             className="w-full sm:w-1/2 rounded-xl bg-slate-900 text-white px-4 py-2 disabled:opacity-50"
           >
-            {status === "uploading" ? "Uploading..." : status === "converting" ? "Converting..." : "Convert"}
+            {status === "uploading"
+              ? "Uploading..."
+              : status === "converting"
+              ? "Converting..."
+              : "Convert"}
           </button>
         </div>
 
@@ -130,9 +160,23 @@ export default function ImageConvertBox() {
           </a>
         ) : null}
 
-        <p className="text-xs text-slate-500">
-          Files are processed for conversion and should be removed from storage after processing (see Privacy Policy).
-        </p>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setFile(null);
+              resetState();
+              if (fileRef.current) fileRef.current.value = "";
+            }}
+            className="text-xs text-slate-600 hover:text-slate-900 underline"
+          >
+            Reset
+          </button>
+
+          <p className="text-xs text-slate-500">
+            Files are processed only to perform conversion. See Privacy Policy for details.
+          </p>
+        </div>
       </div>
     </div>
   );
