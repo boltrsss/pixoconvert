@@ -58,14 +58,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="mt-12 border-t border-slate-200 pt-6 text-sm text-slate-600 flex flex-wrap gap-x-4 gap-y-2">
-          <a href="/about" className="hover:text-slate-900">About</a>
-          <a href="/privacy" className="hover:text-slate-900">Privacy</a>
-          <a href="/terms" className="hover:text-slate-900">Terms</a>
-          <a href="/contact" className="hover:text-slate-900">Contact</a>
-          <span className="ml-auto">© {new Date().getFullYear()} PixoConvert</span>
-        </footer>
+       
       </div>
     </main>
   );
