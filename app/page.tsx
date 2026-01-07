@@ -16,6 +16,7 @@ export default function HomePage() {
 
         <section className="mb-10">
           <ImageConvertBox />
+          <AdSlot />
         </section>
 
         <section className="grid gap-6 md:grid-cols-3">
