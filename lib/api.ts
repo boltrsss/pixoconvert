@@ -1,105 +1,66 @@
 // lib/api.ts
-
-import { VideoSettings } from "@/types/files";
-
-// 這裡改成你的後端網域
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE || "https://cnv.wiseconverthub.com";
-
-export type UploadUrlResponse = {
-  upload_url: string;
-  key: string;
+export type UploadUrlResponse = { upload_url: string; key: string };
+export type StartResponse = { job_id: string };
+export type StatusResponse = {
+  status: "queued" | "processing" | "done" | "error";
+  download_url?: string;
+  error?: string;
 };
 
-export async function getUploadUrl(file: File): Promise<UploadUrlResponse> {
-  const res = await fetch(`${API_BASE}/api/get-upload-url`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      file_name: file.name,
-      content_type: file.type || "application/octet-stream",
-    }),
-  });
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://cnv.wiseconverthub.com";
 
+async function jsonFetch<T>(url: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(url, init);
   if (!res.ok) {
-    throw new Error("Failed to get upload URL");
+    const text = await res.text().catch(() => "");
+    throw new Error(`API ${res.status}: ${text || res.statusText}`);
   }
-
-  return res.json();
+  return (await res.json()) as T;
 }
 
-export async function uploadFileToS3(
-  file: File,
-  uploadUrl: string
-): Promise<void> {
+/**
+ * Step 1: ask backend for presigned upload URL
+ * NOTE: Update the endpoint path to match your existing backend.
+ */
+export async function getUploadUrl(filename: string, contentType: string) {
+  return jsonFetch<UploadUrlResponse>(`${API_BASE_URL}/upload-url`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ filename, content_type: contentType }),
+  });
+}
+
+/** Step 2: upload file to S3 presigned URL */
+export async function uploadFileToS3(uploadUrl: string, file: File) {
   const res = await fetch(uploadUrl, {
     method: "PUT",
-    headers: {
-      "Content-Type": file.type || "application/octet-stream",
-    },
+    headers: { "Content-Type": file.type || "application/octet-stream" },
     body: file,
   });
-
-  if (!res.ok) {
-    throw new Error("Failed to upload file to S3");
-  }
+  if (!res.ok) throw new Error(`S3 upload failed: ${res.status}`);
 }
 
-export type StartConversionResponse = {
-  job_id: string;
-  status: string;
-};
-
-export async function startConversion(
-  s3Key: string,
-  targetFormat: string,
-  videoSettings?: VideoSettings
-): Promise<StartConversionResponse> {
-  // 統一把前端的 camelCase 轉成後端比較好 parse 的 key
-  const settingsPayload = videoSettings
-    ? {
-        codec: videoSettings.codec,
-        resolution: videoSettings.resolution,
-        aspectRatio: videoSettings.aspectRatio,
-        frameRate: videoSettings.frameRate,
-      }
-    : null;
-
-  const res = await fetch(`${API_BASE}/api/start-conversion`, {
+/**
+ * Step 3: start conversion job
+ * NOTE: Update endpoint + payload to match your existing backend.
+ */
+export async function startImageConvert(key: string, targetFormat: "jpg" | "png" | "webp") {
+  return jsonFetch<StartResponse>(`${API_BASE_URL}/convert/image`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      s3_key: s3Key,
+      tool_slug: "image-convert",
+      input_key: key,
       target_format: targetFormat,
-      settings: settingsPayload,
+      settings: {},
     }),
   });
-
-  if (!res.ok) {
-    throw new Error("Failed to start conversion");
-  }
-
-  return res.json();
 }
 
-export type StatusResponse = {
-  job_id: string;
-  status?: string;
-  progress?: number;
-  message?: string;
-  output_s3_key?: string;
-  file_url?: string;
-  raw?: Record<string, any>;
-};
-
-export async function getJobStatus(jobId: string): Promise<StatusResponse> {
-  const res = await fetch(`${API_BASE}/api/status/${jobId}`, {
+/** Step 4: poll job status */
+export async function getJobStatus(jobId: string) {
+  return jsonFetch<StatusResponse>(`${API_BASE_URL}/status/${jobId}`, {
     method: "GET",
   });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch job status");
-  }
-
-  return res.json();
 }
