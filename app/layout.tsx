@@ -22,8 +22,11 @@ export default function RootLayout({
 
       {/* 🔽🔽🔽 就插在這裡（body 之前） 🔽🔽🔽 */}
       <head>
-       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2697453238338970"
-     crossorigin="anonymous"></script>
+       <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2697453238338970"
+    crossOrigin="anonymous"
+  ></script>
       </head>
       {/* 🔼🔼🔼 插入位置到這裡結束 🔼🔼🔼 */}
       
