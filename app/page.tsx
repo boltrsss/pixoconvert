@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ImageConvertBox from "@/components/ImageConvertBox";
 import AdSlot from "@/components/AdSlot";
 
@@ -17,9 +17,17 @@ export default function HomePage() {
           </p>
         </header>
 
-        {/* Tool */}
-        <section className="mb-6">
-          <ImageConvertBox />
+        {/* Tool (Suspense required for useSearchParams) */}
+        <section className="mb-6" id="convert">
+          <Suspense
+            fallback={
+              <div className="mx-auto max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+                Loading converter…
+              </div>
+            }
+          >
+            <ImageConvertBox />
+          </Suspense>
         </section>
 
         {/* Ad (Top) */}
@@ -29,7 +37,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Info cards (like WiseConvert) */}
+        {/* Info cards */}
         <section className="grid gap-6 md:grid-cols-3">
           <div className="rounded-2xl border border-slate-200 bg-white p-5">
             <h3 className="font-semibold">Supported formats</h3>
@@ -57,8 +65,6 @@ export default function HomePage() {
             <AdSlot label="Ad space (Bottom)" />
           </div>
         </section>
-
-       
       </div>
     </main>
   );
