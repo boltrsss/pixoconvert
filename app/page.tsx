@@ -8,14 +8,20 @@ export default function HomePage() {
       <div className="mx-auto max-w-5xl px-4 py-10">
         {/* Hero */}
         <header className="mb-8">
-          <div className="text-sm text-slate-600">PixoConvert</div>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight">
-            Simple Online Image Converter
-          </h1>
-          <p className="mt-3 max-w-2xl text-slate-700">
-            Convert JPG, PNG, and WebP images in a few clicks. No account required.
-          </p>
-        </header>
+  <div className="text-sm text-slate-600">PixoConvert</div>
+
+  <h1 className="mt-2 text-3xl font-bold tracking-tight">
+    JPG to PNG Converter
+  </h1>
+
+  <p className="mt-3 max-w-2xl text-slate-700">
+    Convert JPG images to PNG online in seconds. No account required.
+    <span className="block text-sm text-slate-500 mt-1">
+      Also supports PNG and WebP images.
+    </span>
+  </p>
+</header>
+
 
         {/* Tool (Suspense required for useSearchParams) */}
         <section className="mb-6" id="convert">
