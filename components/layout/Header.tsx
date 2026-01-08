@@ -20,47 +20,40 @@ export default function Header() {
         </Link>
 
         {/* Desktop Nav */}
-<nav className="hidden md:flex items-center gap-3 text-sm">
-  {/* Core functions – highlighted */}
-  <Link
-    href="/#convert"
-    className="rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-blue-700 font-medium hover:bg-blue-100"
-  >
-    JPG → PNG
-  </Link>
+        <nav className="hidden md:flex items-center gap-3 text-sm">
+          {/* Core functions – highlighted */}
+          <Link
+            href="/?to=png#convert"
+            className="rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-blue-700 font-medium hover:bg-blue-100"
+          >
+            JPG → PNG
+          </Link>
 
-  <Link
-    href="/#convert"
-    className="rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-blue-700 font-medium hover:bg-blue-100"
-  >
-    JPG → WebP
-  </Link>
+          <Link
+            href="/?to=webp#convert"
+            className="rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-blue-700 font-medium hover:bg-blue-100"
+          >
+            JPG → WebP
+          </Link>
 
-  <Link
-    href="/#convert"
-    className="rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-blue-700 font-medium hover:bg-blue-100"
-  >
-    PNG → JPG
-  </Link>
+          <Link
+            href="/?to=jpg#convert"
+            className="rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-blue-700 font-medium hover:bg-blue-100"
+          >
+            PNG → JPG
+          </Link>
 
-  {/* Divider */}
-  <span className="mx-2 h-5 w-px bg-slate-200" />
+          {/* Divider */}
+          <span className="mx-2 h-5 w-px bg-slate-200" />
 
-  {/* Secondary pages */}
-  <Link
-    href="/about"
-    className="text-slate-600 hover:text-slate-900"
-  >
-    About
-  </Link>
-  <Link
-    href="/contact"
-    className="text-slate-600 hover:text-slate-900"
-  >
-    Contact
-  </Link>
-</nav>
-
+          {/* Secondary pages */}
+          <Link href="/about" className="text-slate-600 hover:text-slate-900">
+            About
+          </Link>
+          <Link href="/contact" className="text-slate-600 hover:text-slate-900">
+            Contact
+          </Link>
+        </nav>
 
         {/* Mobile hamburger */}
         <button
@@ -79,21 +72,21 @@ export default function Header() {
           <nav className="flex flex-col px-4 py-4 gap-3 text-sm">
             {/* Core functions */}
             <Link
-              href="/#convert"
+              href="/?to=png#convert"
               onClick={() => setOpen(false)}
               className="text-slate-700"
             >
               Convert JPG → PNG
             </Link>
             <Link
-              href="/#convert"
+              href="/?to=webp#convert"
               onClick={() => setOpen(false)}
               className="text-slate-700"
             >
               Convert JPG → WebP
             </Link>
             <Link
-              href="/#convert"
+              href="/?to=jpg#convert"
               onClick={() => setOpen(false)}
               className="text-slate-700"
             >
