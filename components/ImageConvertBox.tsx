@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   getUploadUrl,
   uploadFileToS3,
@@ -27,8 +28,13 @@ function isErrorStatus(status?: string) {
   return s === "error" || s === "failed" || s === "fail";
 }
 
+function isSupportedTarget(v: string): v is TargetFormat {
+  return (SUPPORTED as string[]).includes(v);
+}
+
 export default function ImageConvertBox() {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const searchParams = useSearchParams();
 
   const [file, setFile] = useState<File | null>(null);
   const [target, setTarget] = useState<TargetFormat>("png");
@@ -40,6 +46,19 @@ export default function ImageConvertBox() {
 
   const [message, setMessage] = useState<string>("");
   const [downloadUrl, setDownloadUrl] = useState<string>("");
+
+  // ✅ 讀取 header 的 ?to=，自動切換 select
+  useEffect(() => {
+    const to = (searchParams.get("to") || "").toLowerCase();
+    if (!to) return;
+
+    // allow jpeg in URL too
+    const normalized = to === "jpeg" ? "jpeg" : to;
+
+    if (isSupportedTarget(normalized)) {
+      setTarget(normalized);
+    }
+  }, [searchParams]);
 
   const canConvert = useMemo(() => {
     return !!file && status !== "uploading" && status !== "converting";
@@ -100,7 +119,7 @@ export default function ImageConvertBox() {
       await uploadFileToS3(file, up.upload_url);
 
       setStatus("converting");
-      setMessage("Converting...");
+      setMessage("Processing...");
 
       const start = await startImageConversion(up.key, normalizeTarget(target));
 
@@ -174,11 +193,13 @@ export default function ImageConvertBox() {
   };
 
   const selectedName = file?.name || "";
-
   const badge = statusBadge(status);
 
   return (
-    <div className="w-full max-w-2xl mx-auto rounded-2xl bg-white shadow-sm border border-slate-200 p-6">
+    <div
+      id="convert"
+      className="w-full max-w-2xl mx-auto rounded-2xl bg-white shadow-sm border border-slate-200 p-6"
+    >
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold">Convert an image</h2>
