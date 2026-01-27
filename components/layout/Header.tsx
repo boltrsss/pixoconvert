@@ -48,6 +48,11 @@ export default function Header() {
             PNG → JPG
           </Link>
 
+          <Link href="/blog" className="text-slate-600 hover:text-slate-900">
+            Blog
+          </Link>
+
+
           {/* Divider */}
           <span className="mx-2 h-5 w-px bg-slate-200" />
 
@@ -104,6 +109,15 @@ export default function Header() {
               Convert PNG → JPG
             </Link>
 
+            <Link
+              href="/blog"
+              onClick={() => setOpen(false)}
+              className="text-slate-700"
+            >
+              Blog
+            </Link>
+
+            
             <div className="h-px bg-slate-200 my-2" />
 
             {/* Pages */}
