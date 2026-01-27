@@ -258,6 +258,49 @@ export default function PrivacyPolicyPage() {
   </a>.
 </p>
 
+<h2>Advertising and Google AdSense</h2>
+
+<p>
+  We use Google AdSense, a third-party advertising service provided by Google
+  Inc. Google AdSense uses cookies, including the DoubleClick cookie, to serve
+  ads to users based on their prior visits to this website or other websites.
+</p>
+
+<p>
+  Third-party vendors, including Google, use cookies to serve ads based on a
+  user's prior visits to this website. This enables the display of
+  advertisements that are relevant to users.
+</p>
+
+<p>
+  Users may opt out of personalized advertising by visiting Google Ads Settings:
+  <a
+    href="https://adssettings.google.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-blue-600 underline ml-1"
+  >
+    https://adssettings.google.com
+  </a>
+</p>
+
+<p>
+  Alternatively, users can opt out of a third-party vendor's use of cookies for
+  personalized advertising by visiting
+  <a
+    href="https://www.aboutads.info"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-blue-600 underline ml-1"
+  >
+    www.aboutads.info
+  </a>.
+</p>
+
+<p>
+  Google’s use of advertising cookies enables it and its partners to serve ads
+  to users based on their visit to this site and/or other sites on the Internet.
+</p>
 
 
       
