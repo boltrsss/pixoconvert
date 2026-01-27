@@ -2,47 +2,37 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-slate-200 bg-white">
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          {/* Left */}
+    <footer className="mt-12 border-t border-slate-200 bg-white">
+      <div className="mx-auto max-w-5xl px-4 py-10">
+        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
           <div>
-            <div className="font-semibold text-slate-900">PixoConvert</div>
-            <p className="text-sm text-slate-500 mt-1">
-              Simple online image converter — JPG, PNG, WebP.
-            </p>
-            <p className="text-xs text-slate-400 mt-2">
-              © {new Date().getFullYear()} PixoConvert. All rights reserved.
+            <div className="text-base font-semibold text-slate-900">
+              PixoConvert
+            </div>
+            <p className="mt-2 text-sm text-slate-600 max-w-sm">
+              Simple online image converter — JPG, PNG, WebP. Files are processed
+              only to perform conversion.
             </p>
           </div>
 
-          {/* Right links */}
-          <div className="flex flex-wrap items-center gap-4 text-sm">
-            <Link
-              href="/about"
-              className="text-slate-600 hover:text-slate-900"
-            >
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+            <Link href="/about" className="text-slate-700 hover:text-slate-900">
               About
             </Link>
-            <Link
-              href="/privacy-policy"
-              className="text-slate-600 hover:text-slate-900"
-            >
+            <Link href="/privacy" className="text-slate-700 hover:text-slate-900">
               Privacy Policy
             </Link>
-            <Link
-              href="/terms-of-service"
-              className="text-slate-600 hover:text-slate-900"
-            >
+            <Link href="/terms" className="text-slate-700 hover:text-slate-900">
               Terms of Service
             </Link>
-            <Link
-              href="/contact"
-              className="text-slate-600 hover:text-slate-900"
-            >
+            <Link href="/contact" className="text-slate-700 hover:text-slate-900">
               Contact
             </Link>
           </div>
+        </div>
+
+        <div className="mt-8 text-xs text-slate-500">
+          © {new Date().getFullYear()} PixoConvert. All rights reserved.
         </div>
       </div>
     </footer>
