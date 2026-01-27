@@ -23,22 +23,18 @@ export default function PrivacyPolicyPage() {
         accordance with this Privacy Policy.
       </p>
 
-      <h2 className="font-semibold text-slate-900 mt-6 mb-2">
+      <h2 className="font-semibold text-slate-900 mt-8 mb-2">
         Interpretation and Definitions
       </h2>
 
-      <h3 className="font-medium text-slate-800 mt-4 mb-1">
-        Interpretation
-      </h3>
+      <h3 className="font-medium text-slate-800 mt-4 mb-1">Interpretation</h3>
       <p className="mb-4">
         The words whose initial letters are capitalized have meanings defined
-        under the following conditions. The following definitions shall have
-        the same meaning regardless of whether they appear in singular or plural.
+        under the following conditions. The following definitions shall have the
+        same meaning regardless of whether they appear in singular or plural.
       </p>
 
-      <h3 className="font-medium text-slate-800 mt-4 mb-1">
-        Definitions
-      </h3>
+      <h3 className="font-medium text-slate-800 mt-4 mb-1">Definitions</h3>
       <p className="mb-3">For the purposes of this Privacy Policy:</p>
       <ul className="list-disc list-inside space-y-2 mb-4">
         <li>
@@ -77,7 +73,7 @@ export default function PrivacyPolicyPage() {
         </li>
       </ul>
 
-      <h2 className="font-semibold text-slate-900 mt-6 mb-2">
+      <h2 className="font-semibold text-slate-900 mt-8 mb-2">
         Collecting and Using Your Data
       </h2>
 
@@ -85,9 +81,7 @@ export default function PrivacyPolicyPage() {
         Types of Data Collected
       </h3>
 
-      <h4 className="font-medium text-slate-800 mt-4 mb-1">
-        Usage Data
-      </h4>
+      <h4 className="font-medium text-slate-800 mt-4 mb-1">Usage Data</h4>
       <p className="mb-4">
         Usage Data is collected automatically when using the Service. Usage Data
         may include information such as Your device&apos;s IP address, browser
@@ -119,40 +113,67 @@ export default function PrivacyPolicyPage() {
         properly.
       </p>
 
-      {/* ✅ AdSense required disclosure */}
-      <h2 className="font-semibold text-slate-900 mt-6 mb-2">
-        Advertising (Google AdSense)
+      {/* ✅ AdSense required disclosure (single, clean section) */}
+      <h2 className="font-semibold text-slate-900 mt-8 mb-2">
+        Advertising and Google AdSense
       </h2>
+
       <p className="mb-4">
         We display advertisements on this website, including ads served by
-        Google and other third-party vendors.
+        Google AdSense and other third-party vendors.
       </p>
+
       <p className="mb-4">
         Third-party vendors, including Google, use cookies to serve ads based on
-        a user&apos;s prior visits to this website and/or other websites.
+        a user&apos;s prior visits to this website and/or other websites. This
+        enables the display of advertisements that may be relevant to users.
       </p>
+
       <p className="mb-4">
-        Google&apos;s use of advertising cookies enables it and its partners to
-        serve ads to users based on their visit to this site and/or other sites
-        on the Internet.
+        Google&apos;s use of advertising cookies (including the DoubleClick
+        cookie) enables it and its partners to serve ads to users based on their
+        visit to this site and/or other sites on the Internet.
       </p>
+
       <p className="mb-4">
-        You may opt out of personalized advertising by visiting Google&apos;s
-        Ads Settings:
-        {" "}
+        Users may opt out of personalized advertising by visiting{" "}
         <a
-          href="https://www.google.com/settings/ads"
+          href="https://adssettings.google.com"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 underline"
         >
-          https://www.google.com/settings/ads
+          Google Ads Settings
         </a>
         .
       </p>
+
       <p className="mb-4">
-        You can also manage cookies through your browser settings and, where
-        applicable, through any cookie consent tools provided on the site.
+        Alternatively, users can opt out of some third-party vendors&apos; use of
+        cookies for personalized advertising by visiting{" "}
+        <a
+          href="https://www.aboutads.info"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline"
+        >
+          www.aboutads.info
+        </a>
+        .
+      </p>
+
+      <p className="mb-4">
+        For more information about how Google uses data in advertising products,
+        please see{" "}
+        <a
+          href="https://policies.google.com/technologies/ads"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline"
+        >
+          Google Advertising Policies
+        </a>
+        .
       </p>
 
       <h3 className="font-medium text-slate-800 mt-4 mb-1">
@@ -165,9 +186,7 @@ export default function PrivacyPolicyPage() {
         <li>To help display and measure advertising</li>
       </ul>
 
-      <h3 className="font-medium text-slate-800 mt-4 mb-1">
-        Retention of Data
-      </h3>
+      <h3 className="font-medium text-slate-800 mt-4 mb-1">Retention of Data</h3>
       <p className="mb-4">
         We retain information only for as long as necessary for the purposes set
         out in this Privacy Policy, including security, troubleshooting, and
@@ -178,17 +197,15 @@ export default function PrivacyPolicyPage() {
         conversion and are automatically deleted after processing.
       </p>
 
-      <h3 className="font-medium text-slate-800 mt-4 mb-1">
-        Security
-      </h3>
+      <h3 className="font-medium text-slate-800 mt-4 mb-1">Security</h3>
       <p className="mb-4">
         The security of Your information is important to Us, but remember that
-        no method of transmission over the Internet or electronic storage is 100%
-        secure. We strive to use commercially acceptable means to protect
+        no method of transmission over the Internet or electronic storage is
+        100% secure. We strive to use commercially acceptable means to protect
         information, but cannot guarantee absolute security.
       </p>
 
-      <h2 className="font-semibold text-slate-900 mt-6 mb-2">
+      <h2 className="font-semibold text-slate-900 mt-8 mb-2">
         Children&apos;s Privacy
       </h2>
       <p className="mb-4">
@@ -198,7 +215,7 @@ export default function PrivacyPolicyPage() {
         please contact Us.
       </p>
 
-      <h2 className="font-semibold text-slate-900 mt-6 mb-2">
+      <h2 className="font-semibold text-slate-900 mt-8 mb-2">
         Links to Other Websites
       </h2>
       <p className="mb-4">
@@ -208,7 +225,7 @@ export default function PrivacyPolicyPage() {
         of every site You visit.
       </p>
 
-      <h2 className="font-semibold text-slate-900 mt-6 mb-2">
+      <h2 className="font-semibold text-slate-900 mt-8 mb-2">
         Changes to this Privacy Policy
       </h2>
       <p className="mb-4">
@@ -216,98 +233,7 @@ export default function PrivacyPolicyPage() {
         effective when they are posted on this page.
       </p>
 
-<h2 className="font-semibold text-slate-900 mt-8 mb-2">
-  Advertising and Third-Party Cookies
-</h2>
-
-<p className="mb-4">
-  We use third-party advertising companies, including Google AdSense, to serve
-  ads when you visit our Website. These companies may use cookies or similar
-  technologies to display advertisements to users based on their visits to this
-  and other websites.
-</p>
-
-<p className="mb-4">
-  Google, as a third-party vendor, uses cookies (including the DoubleClick
-  cookie) to serve ads to users based on their prior visits to our Website or
-  other websites on the Internet.
-</p>
-
-<p className="mb-4">
-  Users may opt out of personalized advertising by visiting{" "}
-  <a
-    href="https://adssettings.google.com"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-blue-600 underline"
-  >
-    Google Ads Settings
-  </a>.
-</p>
-
-<p className="mb-4">
-  For more information about how Google manages data in advertising products,
-  please see{" "}
-  <a
-    href="https://policies.google.com/technologies/ads"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-blue-600 underline"
-  >
-    Google Advertising Policies
-  </a>.
-</p>
-
-<h2>Advertising and Google AdSense</h2>
-
-<p>
-  We use Google AdSense, a third-party advertising service provided by Google
-  Inc. Google AdSense uses cookies, including the DoubleClick cookie, to serve
-  ads to users based on their prior visits to this website or other websites.
-</p>
-
-<p>
-  Third-party vendors, including Google, use cookies to serve ads based on a
-  user's prior visits to this website. This enables the display of
-  advertisements that are relevant to users.
-</p>
-
-<p>
-  Users may opt out of personalized advertising by visiting Google Ads Settings:
-  <a
-    href="https://adssettings.google.com"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-blue-600 underline ml-1"
-  >
-    https://adssettings.google.com
-  </a>
-</p>
-
-<p>
-  Alternatively, users can opt out of a third-party vendor's use of cookies for
-  personalized advertising by visiting
-  <a
-    href="https://www.aboutads.info"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-blue-600 underline ml-1"
-  >
-    www.aboutads.info
-  </a>.
-</p>
-
-<p>
-  Google’s use of advertising cookies enables it and its partners to serve ads
-  to users based on their visit to this site and/or other sites on the Internet.
-</p>
-
-
-      
-
-      <h2 className="font-semibold text-slate-900 mt-6 mb-2">
-        Contact Us
-      </h2>
+      <h2 className="font-semibold text-slate-900 mt-8 mb-2">Contact Us</h2>
       <p className="mb-4">
         If you have any questions about this Privacy Policy, You can contact us
         at{" "}
