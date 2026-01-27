@@ -216,6 +216,52 @@ export default function PrivacyPolicyPage() {
         effective when they are posted on this page.
       </p>
 
+<h2 className="font-semibold text-slate-900 mt-8 mb-2">
+  Advertising and Third-Party Cookies
+</h2>
+
+<p className="mb-4">
+  We use third-party advertising companies, including Google AdSense, to serve
+  ads when you visit our Website. These companies may use cookies or similar
+  technologies to display advertisements to users based on their visits to this
+  and other websites.
+</p>
+
+<p className="mb-4">
+  Google, as a third-party vendor, uses cookies (including the DoubleClick
+  cookie) to serve ads to users based on their prior visits to our Website or
+  other websites on the Internet.
+</p>
+
+<p className="mb-4">
+  Users may opt out of personalized advertising by visiting{" "}
+  <a
+    href="https://adssettings.google.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-blue-600 underline"
+  >
+    Google Ads Settings
+  </a>.
+</p>
+
+<p className="mb-4">
+  For more information about how Google manages data in advertising products,
+  please see{" "}
+  <a
+    href="https://policies.google.com/technologies/ads"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-blue-600 underline"
+  >
+    Google Advertising Policies
+  </a>.
+</p>
+
+
+
+      
+
       <h2 className="font-semibold text-slate-900 mt-6 mb-2">
         Contact Us
       </h2>
