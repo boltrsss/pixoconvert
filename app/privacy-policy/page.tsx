@@ -1,3 +1,5 @@
+export const runtime = "edge";
+
 export default function PrivacyPolicyPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-16 text-sm text-slate-700">
@@ -17,35 +19,48 @@ export default function PrivacyPolicyPage() {
         We do not require users to create an account or provide personal
         information to use our image conversion tool.
       </p>
-      <p className="mb-4">
-        Uploaded files are processed only for the purpose of converting them to
-        the selected format. Files are not reviewed manually.
-      </p>
 
       <h2 className="font-semibold text-slate-900 mt-6 mb-2">
         File Processing
       </h2>
       <p className="mb-4">
-        Files uploaded to PixoConvert are temporarily stored to perform the
+        Uploaded files are processed only to perform conversion. Files are not
+        reviewed manually.
+      </p>
+      <p className="mb-4">
+        Files uploaded to PixoConvert may be temporarily stored to complete the
         conversion and are automatically deleted after processing.
+      </p>
+
+      <h2 className="font-semibold text-slate-900 mt-6 mb-2">
+        Advertising (Google AdSense)
+      </h2>
+      <p className="mb-4">
+        We use Google AdSense to display advertisements on this website.
+      </p>
+      <p className="mb-4">
+        Google and its partners may use cookies to serve ads based on users&apos;
+        previous visits to this website or other websites.
+      </p>
+      <p className="mb-4">
+        Users may opt out of personalized advertising by visiting Google&apos;s Ads
+        Settings:{" "}
+        <a
+          className="underline text-blue-700"
+          href="https://adssettings.google.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          https://adssettings.google.com
+        </a>
       </p>
 
       <h2 className="font-semibold text-slate-900 mt-6 mb-2">
         Cookies
       </h2>
       <p className="mb-4">
-        We may use cookies or similar technologies for basic functionality and
-        analytics. These cookies do not contain personally identifiable
-        information.
-      </p>
-
-      <h2 className="font-semibold text-slate-900 mt-6 mb-2">
-        Third-Party Services
-      </h2>
-      <p className="mb-4">
-        We may use third-party services such as analytics or advertising
-        providers in the future. These services may collect information in
-        accordance with their own privacy policies.
+        Cookies may be used for site functionality, analytics, and advertising.
+        Cookies do not necessarily contain personally identifiable information.
       </p>
 
       <h2 className="font-semibold text-slate-900 mt-6 mb-2">
